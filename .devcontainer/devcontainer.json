@@ -1,0 +1,13 @@
+{
+  "name": "Streamlit task tracker Container",
+  "dockerFile": "Dockerfile",
+  "context": "..",
+  "settings": {
+    "python.defaultInterpreterPath": "/usr/local/bin/python"
+  },
+  "extensions": [
+    "ms-python.python",
+    "ms-python.vscode-pylance"
+  ],
+  "remoteUser": "root"
+}
