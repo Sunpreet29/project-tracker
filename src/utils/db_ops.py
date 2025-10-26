@@ -29,10 +29,15 @@ def make_df_orderly(df):
     3. Resets the dataframe index and drops the previous index column.
     These steps are necessary after taking the data and before using the dataframe for plotting.
     """
-    df = df.sort_values(['course', 'date'])
-    df['progress'] = df.groupby('course')['videos_completed'].cumsum()
-    df.reset_index(drop=True, inplace=True)
-    return df
+    df_new = pd.DataFrame(columns=df.columns)
+
+    for course_name in df['course'].unique():
+        df_temp = df[df['course'] == course_name]
+        df_temp = df_temp.sort_values('date')
+        df_temp['progress'] = df_temp['videos_completed'].cumsum()
+        df_new = pd.concat([df_new, df_temp])
+    
+    return df_new
 
 def edit_progress(date, course, videos_completed):
     df = read_data()
