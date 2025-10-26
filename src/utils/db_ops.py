@@ -24,10 +24,12 @@ def read_data():
 def make_df_orderly(df):
     """ 
     Performs these steps in the following order on the given dataframe:
-    1. Sorts the dataframe as per the date column.
-    2. Calculates/updates the progress column with the cumulative sum of videos done.
-    3. Resets the dataframe index and drops the previous index column.
-    These steps are necessary after taking the data and before using the dataframe for plotting.
+    1. Initialize a blank dataframe df_new with the same columns as dataframe named df.
+    2. For each course:
+        - Make a new dataframe df_temp with just 1 course.
+        - Sort the dataframe as per 'date' column.
+        - Update its 'progress' column as per the cumulative sum.
+        - Concatenate df_new with df_temp
     """
     df_new = pd.DataFrame(columns=df.columns)
 
