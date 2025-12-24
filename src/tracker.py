@@ -106,72 +106,84 @@ if role == "Admin":
 # -------------------------------
 st.subheader("📊 Tutorials Progress Overview")
 
-if df_data.empty or len(course_config) == 0:
-    st.info("No data available yet. Admin can add progress and course info above.")
-else:
-    for course, cfg in course_config.items():
-        st.markdown(f"## {course} Progress")
+all_courses = sorted(df_data["course"].unique())
 
-        # --- Planned progress ---
-        start_date = pd.to_datetime(cfg["start_date"])
-        target_days = cfg["target_days"]
-        target_videos = cfg["target_videos"]
-        planned_per_day = target_videos / target_days
+visible_courses = st.multiselect(
+    "Select projects to display",
+    all_courses,
+    default=all_courses[0]  # or any subset
+)
 
-        dates = [start_date + datetime.timedelta(days=j) for j in range(target_days)]
-        df_planned = pd.DataFrame({
-            "dates": dates,
-            "planned_progress": np.arange(
-                planned_per_day,
-                target_videos + planned_per_day,
-                planned_per_day
-            )
-        })
-        df_planned_till_date = df_planned[df_planned["dates"] <= date_today]
+if not visible_courses:
+    st.info("Select at least one project to display.")
+    st.stop()
 
-        # --- Actual progress ---
-        df_course = df_data[df_data["course"] == course].sort_values("date")
-        if not df_course.empty:
-            df_course["cumulative_progress"] = df_course["videos_completed"].cumsum()
-        else:
-            df_course = pd.DataFrame(columns=["date", "cumulative_progress"])
+for course, cfg in course_config.items():
+    st.markdown(f"## {course} Progress")
 
-        # --- Plotting ---
-        fig = go.Figure()
+    if course not in visible_courses:
+        continue
 
-        fig.add_trace(go.Scatter(
-            x=df_planned["dates"],
-            y=df_planned["planned_progress"],
-            mode="lines+markers",
-            name=f"{course} Planned",
-            line=dict(color="lightgreen")
-        ))
+    st.markdown(f"## {course} Progress")
 
-        fig.add_trace(go.Scatter(
-            x=df_planned_till_date["dates"],
-            y=df_planned_till_date["planned_progress"],
-            mode="lines+markers",
-            name=f"{course} Planned till today",
-            line=dict(color="green", width=3)
-        ))
+    # --- Planned progress ---
+    start_date = pd.to_datetime(cfg["start_date"])
+    target_days = cfg["target_days"]
+    target_videos = cfg["target_videos"]
+    planned_per_day = target_videos / target_days
 
-        if not df_course.empty:
-            fig.add_trace(go.Scatter(
-                x=df_course["date"],
-                y=df_course["cumulative_progress"],
-                mode="lines+markers",
-                name=f"{course} Actual",
-                line=dict(color="blue", width=3)
-            ))
-
-        fig.update_layout(
-            height=500,
-            width=1000,
-            showlegend=True,
-            title=f"{course} Tutorials Progress",
-            xaxis_title="Date",
-            yaxis_title="Videos Completed",
+    dates = [start_date + datetime.timedelta(days=j) for j in range(target_days)]
+    df_planned = pd.DataFrame({
+        "dates": dates,
+        "planned_progress": np.arange(
+            planned_per_day,
+            target_videos + planned_per_day,
+            planned_per_day
         )
+    })
+    df_planned_till_date = df_planned[df_planned["dates"] <= date_today]
 
-        st.plotly_chart(fig, use_container_width=True)
-        st.markdown("---")  # visual separator between courses
+    # --- Actual progress ---
+    df_course = df_data[df_data["course"] == course].sort_values("date")
+    if not df_course.empty:
+        df_course["cumulative_progress"] = df_course["videos_completed"].cumsum()
+
+    # --- Plotting ---
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatter(
+        x=df_planned["dates"],
+        y=df_planned["planned_progress"],
+        mode="lines+markers",
+        name=f"{course} Planned",
+        line=dict(color="lightgreen")
+    ))
+
+    fig.add_trace(go.Scatter(
+        x=df_planned_till_date["dates"],
+        y=df_planned_till_date["planned_progress"],
+        mode="lines+markers",
+        name=f"{course} Planned till today",
+        line=dict(color="green", width=3)
+    ))
+
+    if not df_course.empty:
+        fig.add_trace(go.Scatter(
+            x=df_course["date"],
+            y=df_course["cumulative_progress"],
+            mode="lines+markers",
+            name=f"{course} Actual",
+            line=dict(color="blue", width=3)
+        ))
+
+    fig.update_layout(
+        height=500,
+        width=1000,
+        showlegend=True,
+        title=f"{course} Tutorials Progress",
+        xaxis_title="Date",
+        yaxis_title="Videos Completed",
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+    st.markdown("---")  # visual separator between courses
