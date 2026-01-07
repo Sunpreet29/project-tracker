@@ -13,7 +13,7 @@ date_today = str(datetime.date.today())
 # Streamlit setup
 # -------------------------------
 st.set_page_config(page_title="Progress Tracker", layout="wide")
-st.title("📚 Tutorials Tracking Dashboard 📚")
+st.title("📚 Progress Tracking Dashboard 📚")
 
 # Load or create data
 df_data = init_data()
@@ -104,7 +104,7 @@ if role == "Admin":
 # -------------------------------
 # Dashboard (Visible to Everyone)
 # -------------------------------
-st.subheader("📊 Tutorials Progress Overview")
+st.subheader("📊 Progress Overview")
 
 all_courses = sorted(df_data["course"].unique())
 
