@@ -2,11 +2,6 @@
     "Python": {
         "start_date": "2025-10-13",
         "target_days": 50,
-        "target_videos": 100
-    },
-    "C++": {
-        "start_date": "2025-10-13",
-        "target_days": 50,
-        "target_videos": 72
+        "target_units": 100
     }
 }
