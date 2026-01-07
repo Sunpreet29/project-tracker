@@ -14,12 +14,12 @@ CONFIG_PATH = Path(__file__).resolve().parent.parent / "data" / "course_config.j
 def init_data():
     DATA_PATH.parent.mkdir(parents=True, exist_ok=True)
     if not DATA_PATH.exists():
-        df = pd.DataFrame(columns=["date", "course", "videos_completed"])
+        df = pd.DataFrame(columns=["date", "course", "units_completed"])
         df.to_csv(DATA_PATH, index=False)
     return read_data()
 
 def read_data():
-    return pd.read_csv(DATA_PATH) if DATA_PATH.exists() else pd.DataFrame.columns(columns=["date", "course", "videos_completed"])
+    return pd.read_csv(DATA_PATH) if DATA_PATH.exists() else pd.DataFrame.columns(columns=["date", "course", "units_completed"])
 
 def make_df_orderly(df):
     """ 
@@ -36,14 +36,14 @@ def make_df_orderly(df):
     for course_name in df['course'].unique():
         df_temp = df[df['course'] == course_name]
         df_temp = df_temp.sort_values('date')
-        df_temp['progress'] = df_temp['videos_completed'].cumsum()
+        df_temp['progress'] = df_temp['units_completed'].cumsum()
         df_new = pd.concat([df_new, df_temp])
     
     return df_new
 
-def edit_progress(date, course, videos_completed):
+def edit_progress(date, course, units_completed):
     df = read_data()
-    new_row = pd.DataFrame([[date, course, videos_completed]], columns=df.columns[:3])
+    new_row = pd.DataFrame([[date, course, units_completed]], columns=df.columns[:3])
     match_cols = ["date", "course"]
     mask = pd.Series(True, index=df.index)
 
