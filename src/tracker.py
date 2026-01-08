@@ -40,10 +40,10 @@ if role == "Admin":
             else:
                 date = st.date_input("Select Date", datetime.date.today())
                 course = st.selectbox("Select Course", list(course_config.keys()))
-                videos_completed = st.number_input("Videos Completed", min_value=0, step=1)
+                units_completed = st.number_input("Units Completed", min_value=0, step=1)
 
                 if st.button("💾 Add Progress"):
-                    edit_progress(str(date), course, videos_completed)
+                    edit_progress(str(date), course, units_completed)
                     st.success(f"Progress updated successfully for {course}!")
 
         # --- Course Management Tab ---
@@ -75,17 +75,17 @@ if role == "Admin":
                     min_value=1,
                     value=int(all_configs.get(course_name, {}).get("target_days", 30))
                 )
-                target_videos = st.number_input(
-                    "Target Total Videos",
+                target_units = st.number_input(
+                    "Target Total Videos/Chapters/Units",
                     min_value=1,
-                    value=int(all_configs.get(course_name, {}).get("target_videos", 50))
+                    value=int(all_configs.get(course_name, {}).get("target_units", 50))
                 )
 
                 if st.button("💾 Save Course Configuration"):
                     all_configs[course_name] = {
                         "start_date": str(start_date),
                         "target_days": int(target_days),
-                        "target_videos": int(target_videos)
+                        "target_units": int(target_units)
                     }
                     save_course_config(all_configs)
                     st.success(f"Configuration saved for {course_name}!")
@@ -119,8 +119,6 @@ if not visible_courses:
     st.stop()
 
 for course, cfg in course_config.items():
-    st.markdown(f"## {course} Progress")
-
     if course not in visible_courses:
         continue
 
@@ -129,15 +127,15 @@ for course, cfg in course_config.items():
     # --- Planned progress ---
     start_date = pd.to_datetime(cfg["start_date"])
     target_days = cfg["target_days"]
-    target_videos = cfg["target_videos"]
-    planned_per_day = target_videos / target_days
+    target_units = cfg["target_units"]
+    planned_per_day = target_units / target_days
 
     dates = [start_date + datetime.timedelta(days=j) for j in range(target_days)]
     df_planned = pd.DataFrame({
         "dates": dates,
         "planned_progress": np.arange(
             planned_per_day,
-            target_videos + planned_per_day,
+            target_units + planned_per_day,
             planned_per_day
         )
     })
@@ -146,7 +144,7 @@ for course, cfg in course_config.items():
     # --- Actual progress ---
     df_course = df_data[df_data["course"] == course].sort_values("date")
     if not df_course.empty:
-        df_course["cumulative_progress"] = df_course["videos_completed"].cumsum()
+        df_course["cumulative_progress"] = df_course["units_completed"].cumsum()
 
     # --- Plotting ---
     fig = go.Figure()
@@ -182,7 +180,7 @@ for course, cfg in course_config.items():
         showlegend=True,
         title=f"{course} Tutorials Progress",
         xaxis_title="Date",
-        yaxis_title="Videos Completed",
+        yaxis_title="Videos/Chapters/Units Completed",
     )
 
     st.plotly_chart(fig, use_container_width=True)
