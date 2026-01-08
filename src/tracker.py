@@ -122,7 +122,7 @@ for course, cfg in course_config.items():
     if course not in visible_courses:
         continue
 
-    st.markdown(f"## {course} Progress")
+    st.markdown(f"## {course}")
 
     # --- Planned progress ---
     start_date = pd.to_datetime(cfg["start_date"])
@@ -178,7 +178,7 @@ for course, cfg in course_config.items():
         height=500,
         width=1000,
         showlegend=True,
-        title=f"{course} Tutorials Progress",
+        title=f"{course} Progress",
         xaxis_title="Date",
         yaxis_title="Videos/Chapters/Units Completed",
     )
