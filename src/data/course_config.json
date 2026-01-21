@@ -1,7 +1,12 @@
 {
-    "Python": {
-        "start_date": "2025-10-13",
-        "target_days": 50,
-        "target_units": 100
-    }
+  "Python": {
+    "start_date": "2025-10-13",
+    "target_days": 50,
+    "target_units": 100
+  },
+  "C++": {
+    "start_date": "2026-01-21",
+    "target_days": 70,
+    "target_units": 74
+  }
 }
