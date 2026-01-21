@@ -89,7 +89,6 @@ if role == "Admin":
                     }
                     save_course_config(all_configs)
                     st.success(f"Configuration saved for {course_name}!")
-                    st.experimental_rerun()
 
             st.markdown("### Existing Courses")
             if all_configs:
