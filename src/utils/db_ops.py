@@ -19,7 +19,10 @@ def init_data():
     return read_data()
 
 def read_data():
-    return pd.read_csv(DATA_PATH) if DATA_PATH.exists() else pd.DataFrame.columns(columns=["date", "course", "units_completed"])
+    DATA_PATH.parent.mkdir(parents=True, exist_ok=True)
+    if not DATA_PATH.exists():
+        return pd.DataFrame(columns=["date", "course", "videos_completed"])
+    return pd.read_csv(DATA_PATH)
 
 def make_df_orderly(df):
     """ 
