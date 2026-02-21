@@ -45,6 +45,7 @@ if role == "Admin":
                 if st.button("💾 Add Progress"):
                     edit_progress(str(date), course, units_completed)
                     st.success(f"Progress updated successfully for {course}!")
+                    st.rerun()
 
         # --- Course Management Tab ---
         with tab2:
